@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لينا | Lina - الترجمة المنظمة بدون تداخل</title>
+    <title>لينا | Lina - الترجمة فوق السطر</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
     
@@ -253,26 +253,26 @@
 
     <nav>
         <div class="brand">لينا 👑</div>
-        <div class="badge">بدون أي تداخل ✨</div>
+        <div class="badge">الترجمة فوق السطر ✨</div>
     </nav>
 
     <section class="hero">
-        <h1>ترجمي ملفاتك بدقة ووضوح مع <span>لينا</span></h1>
-        <p>تم توسيع المسافات بين السطور لضمان قراءة مريحة ومنظمة 100%!</p>
+        <h1>ترجمي ملفاتك بوضوح مع <span>لينا</span></h1>
+        <p>الترجمة العربية تظهر الآن <strong>فوق كل سطر إنجليزي</strong> مباشرة بمسافة آمنة ونظيفة!</p>
     </section>
 
     <main class="workspace">
         <label for="fileInput" class="upload-box" id="dropZone">
             <div class="icon-circle">📄</div>
             <h3>اختاري ملف الـ PDF لترجمته</h3>
-            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">يحافظ على المخططات والصور مع مسافات آمنة للترجمة</p>
+            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">الترجمة ستكون فوق السطر مع الحفاظ على المخططات</p>
             <div class="upload-btn-text">اختيار ملف PDF ✨</div>
         </label>
         <input type="file" id="fileInput" accept=".pdf">
 
         <div class="progress-area" id="progressArea">
             <div class="progress-header">
-                <span id="statusLabel">جاري ضبط المسافات وترجمة الملف...</span>
+                <span id="statusLabel">جاري معالجة الملف وضع الترجمة فوق الأسطر...</span>
                 <span id="percentLabel">0%</span>
             </div>
             <div class="progress-track">
@@ -286,7 +286,7 @@
         </div>
 
         <div class="preview-container" id="previewContainer">
-            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات المرتبة:</h4>
+            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات:</h4>
             <div id="pagesWrapper"></div>
         </div>
     </main>
@@ -312,16 +312,16 @@
         let renderedCanvases = [];
 
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) processPDFNoOverlap(e.target.files[0]);
+            if (e.target.files.length) processPDFAbove(e.target.files[0]);
         });
 
-        async function processPDFNoOverlap(file) {
+        async function processPDFAbove(file) {
             if (file.type !== "application/pdf") {
                 alert("يرجى اختيار ملف بصيغة PDF فقط.");
                 return;
             }
 
-            savedFileName = file.name.replace('.pdf', '') + "_لينا_مرتب";
+            savedFileName = file.name.replace('.pdf', '') + "_لينا_فوق_السطر";
             dropZone.style.display = 'none';
             progressArea.style.display = 'block';
             pagesWrapper.innerHTML = '';
@@ -342,15 +342,14 @@
                     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                         updateProgress(
                             Math.round(((pageNum - 1) / totalPages) * 100),
-                            `جاري ضبط وتنسيق الصفحة ${pageNum} من ${totalPages}...`
+                            `جاري معالجة الصفحة ${pageNum} من ${totalPages}...`
                         );
 
                         const page = await pdf.getPage(pageNum);
                         const scale = 2.0;
                         const viewport = page.getViewport({ scale: scale });
 
-                        // زيادة مساحة إضافية لكل صفحة لتستوعب الفراغات الجديدة بكل راحة
-                        const extraHeight = 500;
+                        const extraHeight = 600;
                         const canvas = document.createElement('canvas');
                         const context = canvas.getContext('2d');
                         canvas.width = viewport.width;
@@ -405,9 +404,8 @@
                             let lineObj = linesMap[i];
                             if (lineObj.text.length < 2 || /^[0-9\W]+$/.test(lineObj.text)) continue;
 
-                            // توسيع الإزاحة التدريجية لإنشاء مسافة أمان كافية بين السطور
                             if (lastY > 0 && (lineObj.y - lastY) > 12) {
-                                currentShift += 22;
+                                currentShift += 25;
                             }
                             lastY = lineObj.y;
 
@@ -420,25 +418,26 @@
                             const textMetrics = context.measureText(arText);
                             const arWidth = textMetrics.width;
                             
+                            // إحداثي الـ Y ليصبح فوق السطر الإنجليزي مباشرة
                             const realY = viewport.height - lineObj.y + currentShift;
-                            const arY = realY + arFontSize + 12; // مسافة أمان واسعة تمنع التداخل نهائياً
+                            const arY = realY - 6; // فوق السطر تماماً
 
-                            // صندوق خلفية أبيض عريض ونظيف يحجب أي تداخل محتمل
+                            // صندوق خلفية أبيض خلف الترجمة لحمايتها من التداخل مع أي شيء فوقها
                             context.fillStyle = "rgba(255, 255, 255, 0.98)";
-                            context.fillRect(lineObj.minX - 8, arY - arFontSize - 3, arWidth + 16, arFontSize + 10);
+                            context.fillRect(lineObj.minX - 8, arY - arFontSize - 2, arWidth + 16, arFontSize + 6);
 
-                            // كتابة الترجمة بوضوح
+                            // كتابة الترجمة العربية فوق السطر
                             context.fillStyle = "#be185d";
                             context.textAlign = "right";
                             context.direction = "rtl";
-                            context.fillText(arText, lineObj.minX + arWidth, arY + 2);
+                            context.fillText(arText, lineObj.minX + arWidth, arY);
                         }
 
                         pagesWrapper.appendChild(canvas);
                         renderedCanvases.push(canvas);
                     }
 
-                    updateProgress(100, "✨ تمت المعالجة بدون أي تداخل!");
+                    updateProgress(100, "✨ تمت المعالجة ووضع الترجمة فوق الأسطر بنجاح!");
                     actionBar.style.display = 'flex';
 
                 } catch (error) {
@@ -489,7 +488,7 @@
             });
 
             pdf.save(savedFileName + '.pdf');
-            statusLabel.innerText = "✨ تم تحميل الملف بنجاح وبدون تداخل!";
+            statusLabel.innerText = "✨ تم تحميل الملف بنجاح والترجمة فوق الأسطر!";
         }
 
         function resetPage() {
