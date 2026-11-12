@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لينا | Lina - مترجم ملفات PDF الذكي</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #fdf8fa;
+            --primary: #d946ef;
+            --primary-dark: #a21caf;
+            --accent: #f43f5e;
+            --text-dark: #1e1b4b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(244, 63, 94, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.1) 0px, transparent 50%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        nav {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #db2777, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, #fce7f3, #f3e8ff);
+            color: #be185d;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid #fbcfe8;
+        }
+
+        .hero {
+            text-align: center;
+            max-width: 650px;
+            padding: 10px 20px 25px;
+        }
+
+        .hero h1 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .workspace {
+            background: #ffffff;
+            width: 92%;
+            max-width: 780px;
+            border-radius: 32px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(219, 39, 119, 0.08);
+            border: 1px solid #fce7f3;
+            margin-bottom: 40px;
+        }
+
+        .upload-box {
+            border: 2px dashed #f472b6;
+            border-radius: 24px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            background: linear-gradient(180deg, #fff 0%, #fdf2f8 100%);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-box:hover {
+            border-color: #9333ea;
+            transform: translateY(-2px);
+        }
+
+        .icon-circle {
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            color: white;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .upload-box h3 {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .upload-btn-text {
+            display: inline-block;
+            background: white;
+            color: #db2777;
+            padding: 10px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(219, 39, 119, 0.1);
+            border: 1px solid #fbcfe8;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .progress-area {
+            display: none;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: #be185d;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 12px;
+            background: #fce7f3;
+            border-radius: 50px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ec4899, #9333ea);
+            border-radius: 50px;
+            transition: width 0.3s ease;
+        }
+
+        .action-bar {
+            display: none;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            color: white;
+            box-shadow: 0 8px 20px rgba(219, 39, 119, 0.3);
+        }
+
+        .btn-reset {
+            background: #fdf2f8;
+            color: #be185d;
+            border: 1px solid #fbcfe8;
+        }
+
+        .results-section {
+            display: none;
+            margin-top: 25px;
+            border-top: 2px solid #fdf2f8;
+            padding-top: 20px;
+        }
+
+        .results-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .count-pill {
+            background: #f3e8ff;
+            color: #7e22ce;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        #printableArea {
+            background: #ffffff;
+            border: 1px solid #f3e8ff;
+            border-radius: 16px;
+            padding: 20px;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        .doc-banner {
+            text-align: center;
+            padding-bottom: 15px;
+            margin-bottom: 18px;
+            border-bottom: 2px solid #fce7f3;
+        }
+
+        .doc-banner h2 {
+            color: #db2777;
+            font-size: 1.3rem;
+        }
+
+        .pair-card {
+            background: #fdfcfd;
+            border: 1px solid #f3e8ff;
+            border-right: 4px solid #ec4899;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+
+        .en-txt {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            direction: ltr;
+            text-align: left;
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .ar-txt {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            text-align: right;
+            color: #be185d;
+            font-size: 14px;
+            font-weight: 700;
+            background: #fdf2f8;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand">لينا 👑</div>
+        <div class="badge">مجاني وسريع ✨</div>
+    </nav>
+
+    <section class="hero">
+        <h1>ترجمي ملفاتك بأناقة مع <span>لينا</span></h1>
+        <p>ارفعي أي ملف PDF باللغة الإنجليزية، وسأقوم بترجمته لكِ سطراً بسطر (إنجليزي وتحته عربي).</p>
+    </section>
+
+    <main class="workspace">
+        <label for="fileInput" class="upload-box" id="dropZone">
+            <div class="icon-circle">📄</div>
+            <h3>اسحبي ملف الـ PDF وضعيه هنا</h3>
+            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">أو اضغطي لاختيار الملف من جهازك</p>
+            <div class="upload-btn-text">اختيار ملف PDF ✨</div>
+        </label>
+        <input type="file" id="fileInput" accept=".pdf">
+
+        <div class="progress-area" id="progressArea">
+            <div class="progress-header">
+                <span id="statusLabel">جاري قراءة الملف...</span>
+                <span id="percentLabel">0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="action-bar" id="actionBar">
+            <button class="btn btn-download" onclick="saveAsPDF()">✨ تحميل الملف المترجم (PDF)</button>
+            <button class="btn btn-reset" onclick="resetPage()">🔄 ترجمة ملف آخر</button>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="results-title">
+                <h4>📖 معاينة الترجمة الفورية:</h4>
+                <span class="count-pill" id="lineCounter">0 سطر</span>
+            </div>
+            <div id="printableArea">
+                <div class="doc-banner">
+                    <h2>ترجمة منصة لينا 👑 (Lina)</h2>
+                </div>
+                <div id="cardsContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        صُمم بكل حب وأناقة • منصة لينا للترجمة الذكية 🌸
+    </footer>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const progressArea = document.getElementById('progressArea');
+        const progressFill = document.getElementById('progressFill');
+        const statusLabel = document.getElementById('statusLabel');
+        const percentLabel = document.getElementById('percentLabel');
+        const actionBar = document.getElementById('actionBar');
+        const resultsSection = document.getElementById('resultsSection');
+        const cardsContainer = document.getElementById('cardsContainer');
+        const lineCounter = document.getElementById('lineCounter');
+
+        let savedFileName = "Lina_Translated";
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) startProcess(e.target.files[0]);
+        });
+
+        async function startProcess(file) {
+            if (file.type !== "application/pdf") {
+                alert("يرجى اختيار ملف بصيغة PDF فقط.");
+                return;
+            }
+
+            savedFileName = file.name.replace('.pdf', '') + "_لينا";
+            dropZone.style.display = 'none';
+            progressArea.style.display = 'block';
+            cardsContainer.innerHTML = '';
+            setProgress(5, "جاري استخراج النصوص...");
+
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+
+            reader.onload = async function() {
+                try {
+                    const typedarray = new Uint8Array(this.result);
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    let lines = [];
+
+                    for (let p = 1; p <= pdf.numPages; p++) {
+                        const page = await pdf.getPage(p);
+                        const content = await page.getTextContent();
+                        let line = "";
+                        let lastY = null;
+
+                        content.items.forEach(item => {
+                            const txt = item.str.trim();
+                            if (!txt) return;
+                            const y = Math.round(item.transform[5]);
+                            if (lastY !== null && Math.abs(y - lastY) > 6) {
+                                if (line.trim()) lines.push(line.trim());
+                                line = txt;
+                            } else {
+                                line += (line ? " " : "") + txt;
+                            }
+                            lastY = y;
+                        });
+                        if (line.trim()) lines.push(line.trim());
+                    }
+
+                    lines = lines.filter(l => l.length > 1);
+
+                    if (lines.length === 0) {
+                        setProgress(0, "لم يتم العثور على نص في هذا الملف.");
+                        return;
+                    }
+
+                    lineCounter.innerText = `${lines.length} سطر`;
+                    resultsSection.style.display = 'block';
+
+                    for (let i = 0; i < lines.length; i++) {
+                        const en = lines[i];
+                        const pct = Math.round(((i + 1) / lines.length) * 100);
+                        setProgress(pct, `جاري ترجمة السطر ${i + 1} من ${lines.length}...`);
+
+                        const ar = await getArabicTranslation(en);
+
+                        const card = document.createElement('div');
+                        card.className = 'pair-card';
+                        card.innerHTML = `
+                            <div class="en-txt">${cleanHTML(en)}</div>
+                            <div class="ar-txt">${cleanHTML(ar)}</div>
+                        `;
+                        cardsContainer.appendChild(card);
+                    }
+
+                    setProgress(100, "✨ اكتملت الترجمة بكل أناقة!");
+                    actionBar.style.display = 'flex';
+
+                } catch (err) {
+                    console.error(err);
+                    setProgress(0, "حدث خطأ أثناء قراءة الملف.");
+                }
+            };
+        }
+
+        function setProgress(pct, msg) {
+            progressFill.style.width = pct + '%';
+            percentLabel.innerText = pct + '%';
+            statusLabel.innerText = msg;
+        }
+
+        async function getArabicTranslation(text) {
+            try {
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(text)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                return data[0].map(item => item[0]).join('');
+            } catch {
+                return "[تعذرت الترجمة]";
+            }
+        }
+
+        function saveAsPDF() {
+            const area = document.getElementById('printableArea');
+            const prevMaxH = area.style.maxHeight;
+            area.style.maxHeight = 'none';
+
+            statusLabel.innerText = "جاري تجهيز ملف الـ PDF للتحميل... 👑";
+
+            const opt = {
+                margin:       10,
+                filename:     savedFileName + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(area).save().then(() => {
+                area.style.maxHeight = prevMaxH;
+                statusLabel.innerText = "✨ تم تحميل الملف بنجاح!";
+            });
+        }
+
+        function resetPage() {
+            fileInput.value = '';
+            dropZone.style.display = 'flex';
+            progressArea.style.display = 'none';
+            actionBar.style.display = 'none';
+            resultsSection.style.display = 'none';
+            cardsContainer.innerHTML = '';
+        }
+
+        function cleanHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag]));
+        }
+    </script>
+</body>
+</html>
