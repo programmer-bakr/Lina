@@ -1,519 +1,378 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لينا | Lina - منصة الترجمة الذكية للملفات</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <style>
-        :root {
-            --bg-main: #fdf8fa;
-            --primary: #d946ef;
-            --text-dark: #1e1b4b;
-            --text-muted: #64748b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-main);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(244, 63, 94, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.1) 0px, transparent 50%);
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 30px;
-        }
-
-        nav {
-            width: 100%;
-            max-width: 900px;
-            padding: 20px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #db2777, #9333ea);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* عداد الزوار العصري */
-        .visitor-counter {
-            background: linear-gradient(135deg, #fce7f3, #f3e8ff);
-            color: #be185d;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border: 1px solid #fbcfe8;
-            box-shadow: 0 4px 12px rgba(219, 39, 119, 0.08);
-        }
-
-        .hero {
-            text-align: center;
-            max-width: 650px;
-            padding: 10px 20px 25px;
-        }
-
-        .hero h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-
-        .hero h1 span {
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .workspace {
-            background: #ffffff;
-            width: 92%;
-            max-width: 820px;
-            border-radius: 32px;
-            padding: 30px;
-            box-shadow: 0 20px 50px rgba(219, 39, 119, 0.08);
-            border: 1px solid #fce7f3;
-        }
-
-        .upload-box {
-            border: 2px dashed #f472b6;
-            border-radius: 24px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            background: linear-gradient(180deg, #fff 0%, #fdf2f8 100%);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .upload-box:hover {
-            border-color: #9333ea;
-            transform: translateY(-2px);
-        }
-
-        .icon-circle {
-            width: 65px;
-            height: 65px;
-            background: linear-gradient(135deg, #ec4899, #a855f7);
-            color: white;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
-        }
-
-        .upload-btn-text {
-            background: white;
-            color: #db2777;
-            padding: 10px 24px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-top: 15px;
-            box-shadow: 0 4px 12px rgba(219, 39, 119, 0.1);
-            border: 1px solid #fbcfe8;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        .progress-area {
-            display: none;
-            padding: 20px 0;
-            text-align: center;
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            font-weight: 700;
-            color: #be185d;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 12px;
-            background: #fce7f3;
-            border-radius: 50px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ec4899, #9333ea);
-            border-radius: 50px;
-            transition: width 0.3s ease;
-        }
-
-        .action-bar {
-            display: none;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 28px;
-            border-radius: 14px;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-download {
-            background: linear-gradient(135deg, #ec4899, #8b5cf6);
-            color: white;
-            box-shadow: 0 8px 20px rgba(219, 39, 119, 0.3);
-        }
-
-        .btn-reset {
-            background: #fdf2f8;
-            color: #be185d;
-            border: 1px solid #fbcfe8;
-        }
-
-        .preview-container {
-            display: none;
-            margin-top: 25px;
-            border-top: 2px solid #fdf2f8;
-            padding-top: 20px;
-            text-align: center;
-        }
-
-        #pagesWrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            max-height: 550px;
-            overflow-y: auto;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 18px;
-            border: 1px solid #f3e8ff;
-        }
-
-        .rendered-page-canvas {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border: 1px solid #e2e8f0;
-        }
-
-        footer {
-            margin-top: 30px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-align: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6d28d9">
+<title>لينا | منصة الترجمة الذكية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#f7f5ff;--card:#fff;--ink:#211942;--muted:#716b86;--p:#7c3aed;--p2:#c026d3;--line:#e9e2f5;--soft:#f4edff;--good:#15803d;--bad:#b91c1c}
+*{box-sizing:border-box}body{margin:0;font-family:'Cairo',sans-serif;background:radial-gradient(circle at 5% 0,#fce7f3 0,transparent 28%),radial-gradient(circle at 95% 5%,#ede9fe 0,transparent 30%),var(--bg);color:var(--ink);min-height:100vh}
+header{max-width:1120px;margin:auto;padding:22px 22px 8px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-size:28px;font-weight:800;background:linear-gradient(120deg,#db2777,#7c3aed);background-clip:text;-webkit-background-clip:text;color:transparent}
+.brand small{font-size:12px;display:block;color:var(--muted);background:none;-webkit-text-fill-color:var(--muted);font-weight:600}
+.pill{padding:7px 13px;border-radius:99px;background:#fff;border:1px solid var(--line);color:#6d28d9;font-size:12px;font-weight:700}
+.hero{text-align:center;padding:18px 18px 25px}.hero h1{font-size:clamp(24px,4vw,36px);margin:5px 0 8px;font-weight:800}.hero h1 span{color:#9333ea}.hero p{color:var(--muted);margin:0;font-size:14px}
+main{max-width:1050px;width:calc(100% - 28px);margin:0 auto 28px;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:clamp(16px,3vw,30px);box-shadow:0 22px 65px #4c1d9510}
+.section-title{font-size:16px;font-weight:800;margin:0 0 13px}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+.mode{border:1.5px solid var(--line);border-radius:18px;padding:16px;background:#fff;cursor:pointer;transition:.2s;min-height:145px;text-align:right}
+.mode:hover{transform:translateY(-2px);border-color:#c4b5fd}.mode.active{border:2px solid #8b5cf6;background:linear-gradient(140deg,#faf5ff,#fdf2f8);box-shadow:0 8px 24px #7c3aed12}
+.mode .num{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:#ede9fe;color:#6d28d9;font-weight:800;margin-bottom:8px}
+.mode h3{font-size:15px;margin:0 0 6px;color:#6d28d9}.mode p{font-size:12px;line-height:1.8;color:var(--muted);margin:0}
+.mode input{position:absolute;opacity:0;pointer-events:none}
+.info{background:#fffbeb;border:1px solid #f5dfad;border-radius:13px;padding:11px 14px;font-size:12px;line-height:1.9;color:#854d0e;margin:0 0 18px}
+.upload{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:218px;border:2px dashed #b9a4f5;background:radial-gradient(circle at 50% 0,#f5edff 0,transparent 62%),linear-gradient(180deg,#fff,#faf7ff);border-radius:23px;padding:27px 16px;text-align:center;cursor:pointer;transition:transform .22s,border-color .22s,box-shadow .22s,background .22s;overflow:hidden}
+.upload:before{content:"";position:absolute;inset:8px;border:1px solid #eee7fb;border-radius:16px;pointer-events:none}
+.upload:hover,.upload.drag{transform:translateY(-2px);border-color:#7c3aed;background:linear-gradient(145deg,#faf5ff,#fdf2f8);box-shadow:0 14px 30px #7c3aed18}
+.upload .ico{width:66px;height:66px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(135deg,#db2777,#7c3aed);color:white;font-size:31px;box-shadow:0 10px 22px #9333ea30}
+.upload h3{margin:6px 0 0;font-size:17px;color:#2b2050}.upload p{margin:0;color:var(--muted);font-size:12px;line-height:1.8}
+.upload-action{display:inline-flex;align-items:center;justify-content:center;gap:9px;margin-top:10px;padding:11px 23px;border-radius:14px;background:linear-gradient(120deg,#db2777,#7c3aed);color:#fff;font-weight:800;font-size:13px;box-shadow:0 8px 18px #9333ea2b;transition:.2s}
+.upload:hover .upload-action{box-shadow:0 12px 24px #9333ea42;transform:translateY(-1px)}
+.upload-hint{font-size:11px;color:#8b849d;margin-top:3px}
+#fileInput{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.file-meta{display:none;margin-top:12px;padding:12px 14px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+button{font-family:inherit;border:0;border-radius:13px;padding:11px 18px;font-weight:800;cursor:pointer;transition:.2s}
+button:disabled{opacity:.45;cursor:not-allowed}.primary{background:linear-gradient(120deg,#db2777,#7c3aed);color:white;box-shadow:0 8px 18px #9333ea25}.secondary{background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe}.danger{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+button:not(:disabled):hover{transform:translateY(-1px);filter:brightness(1.02)}
+.progress-wrap{display:none;margin-top:20px}.progress-head{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:800;color:#6d28d9;margin-bottom:8px}.track{height:11px;background:#eee8f7;border-radius:30px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#ec4899,#7c3aed);transition:width .25s}
+.status{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.8}
+.preview{display:none;margin-top:25px;border-top:1px solid var(--line);padding-top:20px}.preview-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:16px;max-height:720px;overflow:auto;padding:10px;background:#f8fafc;border:1px solid var(--line);border-radius:16px}
+.page-card{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:9px;box-shadow:0 4px 15px #0f172a0a;min-width:0}.page-label{font-size:11px;color:var(--muted);font-weight:700;margin:0 0 7px}.page-card canvas{display:block;width:100%;height:auto;border:1px solid #e5e7eb}
+.footer{text-align:center;color:#8b849d;font-size:12px;padding:0 15px 25px}
+.toast{display:none;padding:12px 14px;border-radius:12px;margin-top:14px;font-size:13px;line-height:1.8}.toast.error{display:block;background:#fef2f2;color:#991b1b;border:1px solid #fecaca}.toast.ok{display:block;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+@media(max-width:760px){header{padding:14px 16px;align-items:center}.modes{grid-template-columns:1fr}.mode{min-height:0;display:grid;grid-template-columns:40px 1fr;column-gap:10px;align-items:start}.mode .num{grid-row:1/3}.mode h3{margin-top:2px}.hero{padding-top:12px}.pages{grid-template-columns:1fr}.upload{min-height:200px;padding:23px 12px}}
+</style>
 </head>
 <body>
+<header>
+  <div class="brand">لينا 👑<small>LINA SMART TRANSLATION</small></div>
+  <div class="pill">منصة ترجمة ملفات PDF</div>
+</header>
+<section class="hero"><h1>ترجم ملفاتك بذكاء مع <span>لينا</span></h1><p>اختر أسلوب الترجمة، ارفع ملف PDF، ثم عاين النتيجة قبل التحميل.</p></section>
+<main>
+  <h2 class="section-title">① اختر وضع الترجمة</h2>
+  <div class="modes" role="radiogroup" aria-label="أوضاع الترجمة">
+    <label class="mode active" id="mode1"><input type="radio" name="mode" value="1" checked><span class="num">1</span><div><h3>ترجمة كاملة للعربية</h3><p>استبدال النصوص القابلة للاستخراج بالعربية مع الإبقاء على خلفية الصفحة والصور قدر الإمكان، صفحة مقابل صفحة.</p></div></label>
+    <label class="mode" id="mode2"><input type="radio" name="mode" value="2"><span class="num">2</span><div><h3>ترجمة مزدوجة مع الأصل</h3><p>إضافة مساحة ترجمة فوق كل فقرة، ثم إزاحة محتوى الصفحة أسفلها للمحافظة على الصور والمخططات دون تغطيتها.</p></div></label>
+    <label class="mode" id="mode3"><input type="radio" name="mode" value="3"><span class="num">3</span><div><h3>ملف جديد: إنجليزي ثم عربي</h3><p>إعادة تنسيق النص المستخرج في صفحات جديدة؛ كل مقطع إنجليزي تتبعه ترجمته العربية مباشرة.</p></div></label>
+  </div>
+  <div class="info"><b>تنبيه مهم:</b> تعمل هذه النسخة داخل المتصفح وتترجم النصوص القابلة للاستخراج من PDF عبر خدمة ترجمة إنترنت. النص الموجود داخل الصور يحتاج OCR غير مدمج في هذه النسخة. الملفات المحمية أو الممسوحة ضوئياً بالكامل قد لا تُقرأ. في الوضع الثاني تُجمع الأسطر إلى فقرات، وتُضاف مساحة ترجمة فوق كل فقرة مع إزاحة محتوى الصفحة أسفلها. قد يزداد طول الصفحة نتيجة هذه المساحات.</div>
+  <h2 class="section-title">② ارفع ملف PDF</h2>
+  <label class="upload" id="dropZone" for="fileInput">
+    <div class="ico">📄</div>
+    <h3>ارفع ملف PDF للترجمة</h3>
+    <p>اختر ملفاً من جهازك أو اسحبه وأفلته داخل هذه المنطقة</p>
+    <span class="upload-action"><span>＋</span> اختيار ملف PDF</span>
+    <span class="upload-hint">يدعم ملفات PDF حتى 80 ميغابايت</span>
+  </label>
+  <input id="fileInput" type="file" accept="application/pdf,.pdf">
+  <div class="file-meta" id="fileMeta"><span id="fileName">—</span><button class="secondary" id="removeFile" type="button">إزالة الملف</button></div>
+  <div class="controls"><button class="primary" id="startBtn" disabled>✨ ابدأ الترجمة</button><button class="secondary" id="resetBtn" type="button">إعادة ضبط</button></div>
+  <div class="progress-wrap" id="progressWrap"><div class="progress-head"><span id="statusLabel">جارٍ تجهيز الملف...</span><span id="percent">0%</span></div><div class="track"><div class="fill" id="fill"></div></div><div class="status" id="detailStatus">يرجى إبقاء الصفحة مفتوحة أثناء المعالجة.</div></div>
+  <div class="toast" id="toast" role="status"></div>
+  <section class="preview" id="preview"><div class="preview-head"><h2 class="section-title" style="margin:0">③ معاينة النتيجة</h2><span class="pill" id="pageCount">0 صفحة</span></div><div class="pages" id="pages"></div><div class="controls"><button class="primary" id="downloadBtn">⬇ تحميل ملف PDF النهائي</button><button class="secondary" id="newBtn">ترجمة ملف آخر</button></div></section>
+</main>
+<footer class="footer">صُممت منصة لينا بحب • ترجمة الملفات مسؤولية مراجعتها قبل الاستخدام الأكاديمي أو الطبي.</footer>
+<script>
+(() => {
+'use strict';
+if (!window.pdfjsLib || !window.jspdf) {
+  alert('تعذر تحميل مكتبات PDF. تحقق من اتصال الإنترنت ثم أعد فتح الصفحة.');
+  return;
+}
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const $=id=>document.getElementById(id);
+let selectedMode=1, file=null, outputPages=[], outputName='Lina_Translated.pdf', busy=false;
+const fileInput=$('fileInput'), drop=$('dropZone');
+document.querySelectorAll('.mode').forEach(card=>{
+  card.addEventListener('click',()=>{
+    if(busy)return;
+    document.querySelectorAll('.mode').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active'); card.querySelector('input').checked=true;
+    selectedMode=Number(card.querySelector('input').value);
+  });
+});
+function toast(msg,type='error'){const el=$('toast');el.className='toast '+type;el.textContent=msg;}
+function setProgress(p,msg,detail=''){ $('progressWrap').style.display='block';$('fill').style.width=p+'%';$('percent').textContent=p+'%';$('statusLabel').textContent=msg;$('detailStatus').textContent=detail;}
+function setBusy(v){busy=v;$('startBtn').disabled=v||!file;$('resetBtn').disabled=v;$('removeFile').disabled=v;}
+function niceName(name){return name.replace(/\.pdf$/i,'').replace(/[\\/:*?"<>|]/g,'_');}
+function chooseFile(f){
+  if(!f)return;
+  if(f.type!=='application/pdf'&&!f.name.toLowerCase().endsWith('.pdf')){toast('يرجى اختيار ملف PDF فقط.');return;}
+  if(f.size>80*1024*1024){toast('حجم الملف أكبر من 80 ميغابايت. جرّب نسخة أصغر لتجنب نفاد ذاكرة المتصفح.');return;}
+  file=f;$('fileName').textContent=f.name+' • '+(f.size/1024/1024).toFixed(2)+' MB';$('fileMeta').style.display='flex';$('startBtn').disabled=false;$('toast').className='toast';$('preview').style.display='none';
+}
+fileInput.addEventListener('change',e=>chooseFile(e.target.files[0]));
+['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag');}));
+['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag');}));
+drop.addEventListener('drop',e=>chooseFile(e.dataTransfer.files[0]));
+$('removeFile').addEventListener('click',clearFile);
+$('resetBtn').addEventListener('click',clearFile);
+$('newBtn').addEventListener('click',clearFile);
+function clearFile(){if(busy)return;file=null;fileInput.value='';$('fileMeta').style.display='none';$('startBtn').disabled=true;$('progressWrap').style.display='none';$('preview').style.display='none';$('pages').innerHTML='';$('toast').className='toast';outputPages=[];}
+function groupLines(items,viewport){
+  const lines=[];
+  for(const item of items){
+    const str=(item.str||'').replace(/\s+/g,' ').trim();
+    if(!str)continue;
+    const tx=pdfjsLib.Util.transform(viewport.transform,item.transform);
+    const x=tx[4], baseline=tx[5], h=Math.max(7,Math.hypot(tx[2],tx[3]));
+    const w=Math.max(2,(item.width||str.length*5)*viewport.scale);
+    let line=lines.find(l=>Math.abs(l.baseline-baseline)<Math.max(3,h*.48));
+    if(!line){line={parts:[],baseline,minX:x,maxX:x+w,fontSize:h};lines.push(line);}
+    line.parts.push({x,text:str});line.minX=Math.min(line.minX,x);line.maxX=Math.max(line.maxX,x+w);line.fontSize=Math.max(line.fontSize,h);
+  }
+  lines.forEach(l=>{l.parts.sort((a,b)=>a.x-b.x);l.text=l.parts.map(p=>p.text).join(' ').replace(/\s+/g,' ').trim();});
+  return lines.filter(l=>l.text.length>1).sort((a,b)=>a.baseline-b.baseline);
+}
+async function translate(text){
+  const chunks=splitText(text,850), out=[];
+  for(const c of chunks){
+    const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ar&dt=t&q='+encodeURIComponent(c);
+    const res=await fetch(url);
+    if(!res.ok)throw new Error('تعذّر الاتصال بخدمة الترجمة (HTTP '+res.status+').');
+    const data=await res.json();
+    out.push((data[0]||[]).map(x=>x[0]||'').join(''));
+  }
+  return out.join(' ');
+}
+function splitText(s,max){
+  if(s.length<=max)return [s];
+  const words=s.split(/(\s+)/),parts=[];let cur='';
+  for(const w of words){if((cur+w).length>max&&cur){parts.push(cur);cur='';}cur+=w;}
+  if(cur)parts.push(cur);return parts;
+}
+function wrapCanvas(ctx,text,maxWidth){
+  const words=text.split(/\s+/),lines=[];let line='';
+  for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
+  if(line)lines.push(line);return lines;
+}
+function drawArabic(ctx,text,x,y,maxWidth,fontSize,color='#24183d'){
+  const size=Math.max(10,Math.min(17,fontSize*.9));
+  ctx.font='700 '+size+'px Cairo, sans-serif';ctx.fillStyle=color;ctx.textAlign='right';ctx.direction='rtl';
+  const lines=wrapCanvas(ctx,text,maxWidth);let yy=y;
+  for(const line of lines){ctx.fillText(line,x,yy);yy+=size*1.35;}
+  return yy-y;
+}
+async function renderOriginal(page,scale=1.35){
+  const viewport=page.getViewport({scale});
+  const canvas=document.createElement('canvas');canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+  const ctx=canvas.getContext('2d',{alpha:false});ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  await page.render({canvasContext:ctx,viewport}).promise;
+  const text=await page.getTextContent();
+  return {canvas,viewport,ctx,lines:groupLines(text.items,viewport)};
+}
+async function process(){
+ if(!file||busy)return;setBusy(true);$('toast').className='toast';$('preview').style.display='none';$('pages').innerHTML='';outputPages=[];
+ try{
+  await document.fonts.ready;
+  setProgress(1,'جارٍ فتح ملف PDF...','يتم تحميل الصفحات وتحليل النصوص القابلة للاستخراج.');
+  const bytes=await file.arrayBuffer();const pdf=await pdfjsLib.getDocument({data:new Uint8Array(bytes)}).promise;
+  if(pdf.numPages>60)throw new Error('الملف يحتوي على أكثر من 60 صفحة في هذه النسخة. قسّمه إلى ملفات أصغر.');
+  outputName=niceName(file.name)+'_Lina_Mode_'+selectedMode+'.pdf';
+  for(let p=1;p<=pdf.numPages;p++){
+    setProgress(Math.round((p-1)/pdf.numPages*90),'معالجة الصفحة '+p+' من '+pdf.numPages,'استخراج النصوص وترجمتها. لا تغلق الصفحة.');
+    const page=await pdf.getPage(p),rendered=await renderOriginal(page);
+    let translated=[];
+    let pageCanvases;
+    if(selectedMode===2){
+      // ترجمة الفقرات المجمعة ثم إدراج مساحة عربية فوق كل فقرة.
+      const paragraphs=groupParagraphs(rendered.lines);
+      for(let i=0;i<paragraphs.length;i++){
+        const paragraph=paragraphs[i];
+        translated.push(/[A-Za-z]/.test(paragraph.text) ? await translate(paragraph.text) : '');
+      }
+      pageCanvases=[buildOverlayPage(rendered,paragraphs,translated)];
+    }else{
+      for(let i=0;i<rendered.lines.length;i++){
+        const line=rendered.lines[i];
+        if(!/[A-Za-z]/.test(line.text)){translated.push('');continue;}
+        translated.push(await translate(line.text));
+      }
+      if(selectedMode===1) pageCanvases=[buildArabicPage(rendered,translated)];
+      else pageCanvases=buildBilingualPage(rendered.lines,translated,p);
+    }
+    pageCanvases.forEach((canvas,partIndex)=>{
+      outputPages.push(canvas);
+      addPreview(canvas,selectedMode===3 && pageCanvases.length>1 ? (p+' - '+(partIndex+1)) : p);
+    });
+    setProgress(Math.round(p/pdf.numPages*90),'اكتملت الصفحة '+p+' من '+pdf.numPages,'تمت معالجة '+p+' صفحة من أصل '+pdf.numPages+'.');
+  }
+  await document.fonts.ready;
+  setProgress(100,'اكتملت المعالجة بنجاح','راجع المعاينة ثم حمّل الملف النهائي.');
+  $('preview').style.display='block';$('pageCount').textContent=outputPages.length+' صفحة';toast('اكتملت المعالجة. راجع الصفحات قبل اعتماد الملف.','ok');
+ }catch(err){console.error(err);toast('تعذرت معالجة الملف: '+(err.message||'خطأ غير معروف')+' — تأكد من اتصال الإنترنت وأن الملف غير تالف أو محمي.');setProgress(0,'توقفت المعالجة','يمكنك إعادة المحاولة أو اختيار ملف آخر.');}
+ finally{setBusy(false);}
+}
+function buildArabicPage(r,translations){
+ const c=document.createElement('canvas');c.width=r.canvas.width;c.height=r.canvas.height;const x=c.getContext('2d');x.drawImage(r.canvas,0,0);
+ r.lines.forEach((l,i)=>{
+  const ar=translations[i];if(!ar)return;
+  const fs=Math.max(10,Math.min(17,l.fontSize*.85)),pad=3;
+  const left=Math.max(0,l.minX-pad),right=Math.min(c.width,l.maxX+pad);
+  const yTop=Math.max(0,l.baseline-fs*1.05);
+  x.fillStyle='#fff';x.fillRect(left,yTop,Math.max(2,right-left),fs*1.55);
+  drawArabic(x,ar,right-2,l.baseline+fs*.28,Math.max(30,right-left),fs);
+ });
+ return c;
+}
+function groupParagraphs(lines){
+ const paragraphs=[];
+ for(const line of lines){
+  const prev=paragraphs[paragraphs.length-1];
+  const gap=prev ? line.baseline-prev.lastBaseline : Infinity;
+  const font=prev ? Math.max(prev.fontSize,line.fontSize) : line.fontSize;
+  const leftDelta=prev ? Math.abs(line.minX-prev.minX) : Infinity;
+  const likelySameParagraph=prev && gap>0 && gap<=Math.max(25,font*1.85) &&
+    (leftDelta<=Math.max(55,font*4.5) || line.minX<prev.maxX-20);
+  if(likelySameParagraph){
+    prev.lines.push(line);
+    prev.text+=' '+line.text;
+    prev.lastBaseline=line.baseline;
+    prev.minX=Math.min(prev.minX,line.minX);
+    prev.maxX=Math.max(prev.maxX,line.maxX);
+    prev.top=Math.min(prev.top,line.baseline-line.fontSize*1.15);
+    prev.bottom=Math.max(prev.bottom,line.baseline+line.fontSize*.25);
+    prev.fontSize=Math.max(prev.fontSize,line.fontSize);
+  }else{
+    paragraphs.push({
+      lines:[line],text:line.text,lastBaseline:line.baseline,
+      minX:line.minX,maxX:line.maxX,
+      top:line.baseline-line.fontSize*1.15,
+      bottom:line.baseline+line.fontSize*.25,
+      fontSize:line.fontSize
+    });
+  }
+ }
+ return paragraphs.filter(p=>p.text.length>1);
+}
 
-    <nav>
-        <div class="brand">لينا 👑</div>
-        <div class="visitor-counter" id="visitorCounter">👥 الزوار: 0</div>
-    </nav>
+/*
+ * الوضع الثاني:
+ * نُبقي الصفحة الأصلية كصورة واحدة، ونُدرج شريطاً أبيض قبل كل فقرة.
+ * تُكتب الترجمة في الشريط، ثم تُنقل بقية الصفحة إلى الأسفل بمقدار الشريط.
+ * بهذه الطريقة لا نكتب العربية فوق الإنجليزية، وتتحرك الصور والمخططات
+ * الموجودة أسفل الفقرة معها بدلاً من أن تُمحى أو تُغطى.
+ */
+function buildOverlayPage(r,paragraphs,translations){
+ const ctxMeasure=document.createElement('canvas').getContext('2d');
+ const inserts=[];
+ paragraphs.forEach((p,i)=>{
+  const ar=translations[i];
+  if(!ar || !/[A-Za-z]/.test(p.text))return;
+  const left=Math.max(18,p.minX-4);
+  const right=Math.min(r.canvas.width-18,Math.max(p.maxX+4,left+120));
+  const width=Math.max(100,right-left);
+  const fontSize=Math.max(12,Math.min(18,p.fontSize*.88));
+  ctxMeasure.font='700 '+fontSize+'px Cairo, sans-serif';
+  const wrapped=wrapCanvas(ctxMeasure,ar,width-18);
+  const lineHeight=fontSize*1.42;
+  const bandHeight=Math.max(fontSize*1.9,wrapped.length*lineHeight+14);
+  inserts.push({
+    y:Math.max(0,Math.floor(p.top-3)),
+    left,right,width,fontSize,wrapped,bandHeight
+  });
+ });
+ inserts.sort((a,b)=>a.y-b.y);
 
-    <section class="hero">
-        <h1>ترجم ملفاتك باحترافية مع <span>لينا</span></h1>
-        <p>نظام ذكي يعالج المخططات والصور ويترجم النصوص بالكامل للعربية بدقة متناهية!</p>
-    </section>
+ // دمج نقاط الإدراج المتقاربة جداً حتى لا نقص الصفحة مرتين في الموضع نفسه.
+ const clean=[];
+ for(const ins of inserts){
+  const prev=clean[clean.length-1];
+  if(prev && ins.y-prev.y<8){
+    prev.wrapped.push(...ins.wrapped);
+    prev.bandHeight+=ins.bandHeight;
+    prev.fontSize=Math.min(prev.fontSize,ins.fontSize);
+    prev.left=Math.min(prev.left,ins.left);
+    prev.right=Math.max(prev.right,ins.right);
+    prev.width=prev.right-prev.left;
+  }else clean.push({...ins});
+ }
+ const totalAdded=clean.reduce((sum,x)=>sum+x.bandHeight,0);
+ const c=document.createElement('canvas');
+ c.width=r.canvas.width;
+ c.height=r.canvas.height+Math.ceil(totalAdded);
+ const out=c.getContext('2d',{alpha:false});
+ out.fillStyle='#fff';out.fillRect(0,0,c.width,c.height);
 
-    <main class="workspace">
-        <label for="fileInput" class="upload-box" id="dropZone">
-            <div class="icon-circle">📄</div>
-            <h3>اضغط هنا لاختيار ملف الـ PDF</h3>
-            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">دعم كامل للمخططات والصور مع ترجمة عربية خالصة</p>
-            <div class="upload-btn-text">اختر ملف PDF ✨</div>
-        </label>
-        <input type="file" id="fileInput" accept=".pdf">
-
-        <div class="progress-area" id="progressArea">
-            <div class="progress-header">
-                <span id="statusLabel">جاري معالجة الملف وترجمته...</span>
-                <span id="percentLabel">0%</span>
-            </div>
-            <div class="progress-track">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-        </div>
-
-        <div class="action-bar" id="actionBar">
-            <button class="btn btn-download" onclick="exportFinalPDF()">✨ تحميل الملف المترجم (PDF)</button>
-            <button class="btn btn-reset" onclick="resetPage()">🔄 ترجمة ملف آخر</button>
-        </div>
-
-        <div class="preview-container" id="previewContainer">
-            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات:</h4>
-            <div id="pagesWrapper"></div>
-        </div>
-    </main>
-
-    <footer>
-        صُمم بكل حب وأناقة • منصة لينا للترجمة الذكية 🌸
-    </footer>
-
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
-        // نظام عداد الزوار (يزداد مع كل زيارة حقيقية للموقع ويحفظ محلياً)
-        function initVisitorCounter() {
-            let count = localStorage.getItem('lina_visitors');
-            if (!count) {
-                count = 1255; // رقم بداية أساسي تفاعلي
-            } else {
-                count = parseInt(count) + 1;
-            }
-            localStorage.setItem('lina_visitors', count);
-            document.getElementById('visitorCounter').innerText = `👥 الزوار: ${count}`;
-        }
-        initVisitorCounter();
-
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const progressArea = document.getElementById('progressArea');
-        const progressFill = document.getElementById('progressFill');
-        const statusLabel = document.getElementById('statusLabel');
-        const percentLabel = document.getElementById('percentLabel');
-        const actionBar = document.getElementById('actionBar');
-        const previewContainer = document.getElementById('previewContainer');
-        const pagesWrapper = document.getElementById('pagesWrapper');
-
-        let savedFileName = "Lina_Arabic_Translated";
-        let renderedCanvases = [];
-
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) processSmartPDF(e.target.files[0]);
-        });
-
-        async function processSmartPDF(file) {
-            if (file.type !== "application/pdf") {
-                alert("يرجى اختيار ملف بصيغة PDF فقط.");
-                return;
-            }
-
-            savedFileName = file.name.replace('.pdf', '') + "_معرب_بالكامل";
-            dropZone.style.display = 'none';
-            progressArea.style.display = 'block';
-            pagesWrapper.innerHTML = '';
-            renderedCanvases = [];
-            updateProgress(5, "جاري تحليل هيكل الملف والصور...");
-
-            const reader = new FileReader();
-            reader.readAsArrayBuffer(file);
-
-            reader.onload = async function() {
-                try {
-                    const typedarray = new Uint8Array(this.result);
-                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                    const totalPages = pdf.numPages;
-
-                    previewContainer.style.display = 'block';
-
-                    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-                        updateProgress(
-                            Math.round(((pageNum - 1) / totalPages) * 100),
-                            `جاري معالجة الصفحة ${pageNum} من ${totalPages}...`
-                        );
-
-                        const page = await pdf.getPage(pageNum);
-                        const scale = 2.0;
-                        const viewport = page.getViewport({ scale: scale });
-
-                        const extraHeight = 600;
-                        const canvas = document.createElement('canvas');
-                        const context = canvas.getContext('2d');
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height + extraHeight;
-                        canvas.className = 'rendered-page-canvas';
-
-                        // خلفية بيضاء نقية
-                        context.fillStyle = "#ffffff";
-                        context.fillRect(0, 0, canvas.width, canvas.height);
-
-                        // رسم محتوى الصفحة الأصلي (الصور والمخططات تبقى سليمة تماماً)
-                        await page.render({
-                            canvasContext: context,
-                            viewport: viewport
-                        }).promise;
-
-                        const textContent = await page.getTextContent();
-                        let linesMap = [];
-
-                        textContent.items.forEach(item => {
-                            const str = item.str.trim();
-                            if (!str) return;
-
-                            const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-                            const x = tx[4];
-                            const y = viewport.height - tx[5];
-                            const fontHeight = Math.hypot(tx[2], tx[3]);
-
-                            let existingLine = linesMap.find(l => Math.abs(l.y - y) < (fontHeight * 0.8));
-                            if (existingLine) {
-                                existingLine.text += " " + str;
-                                existingLine.minX = Math.min(existingLine.minX, x);
-                                existingLine.maxX = Math.max(existingLine.maxX, x + (item.width * scale));
-                            } else {
-                                linesMap.push({
-                                    text: str,
-                                    y: y,
-                                    minX: x,
-                                    maxX: x + (item.width * scale),
-                                    fontSize: fontHeight
-                                });
-                            }
-                        });
-
-                        // ترتيب الأسطر من الأعلى للأسفل
-                        linesMap.sort((a, b) => a.y - b.y);
-
-                        let currentShift = 0;
-                        let lastY = 0;
-
-                        for (let i = 0; i < linesMap.length; i++) {
-                            let lineObj = linesMap[i];
-                            if (lineObj.text.length < 2 || /^[0-9\W]+$/.test(lineObj.text)) continue;
-
-                            if (lastY > 0 && (lineObj.y - lastY) > 12) {
-                                currentShift += 25;
-                            }
-                            lastY = lineObj.y;
-
-                            const arText = await translateText(lineObj.text);
-                            if (!arText) continue;
-
-                            const arFontSize = Math.max(11, Math.min(lineObj.fontSize * 0.85, 18));
-                            context.font = `bold ${arFontSize}px 'Cairo', sans-serif`;
-                            
-                            const textMetrics = context.measureText(arText);
-                            const arWidth = textMetrics.width;
-                            
-                            const realY = viewport.height - lineObj.y + currentShift;
-                            const arY = realY - 8; // وضع الترجمة العربية الخالصة فوق السطر مباشرة وبدون أي تداخل
-
-                            // صندوق خلفية أبيض عريض ونظيف لحجب النص الإنجليزي وعرض الترجمة العربية فقط بوضوح
-                            context.fillStyle = "#ffffff";
-                            context.fillRect(lineObj.minX - 10, arY - arFontSize - 4, Math.max(arWidth + 20, lineObj.maxX - lineObj.minX + 20), arFontSize + 10);
-
-                            // كتابة الترجمة العربية فقط
-                            context.fillStyle = "#9f1239";
-                            context.textAlign = "right";
-                            context.direction = "rtl";
-                            context.fillText(arText, lineObj.minX + arWidth, arY);
-                        }
-
-                        pagesWrapper.appendChild(canvas);
-                        renderedCanvases.push(canvas);
-                    }
-
-                    updateProgress(100, "✨ تمت الترجمة والتعريب بالكامل بنجاح!");
-                    actionBar.style.display = 'flex';
-
-                } catch (error) {
-                    console.error(error);
-                    updateProgress(0, "حدث خطأ أثناء معالجة الملف.");
-                }
-            };
-        }
-
-        function updateProgress(pct, msg) {
-            progressFill.style.width = pct + '%';
-            percentLabel.innerText = pct + '%';
-            statusLabel.innerText = msg;
-        }
-
-        async function translateText(text) {
-            try {
-                let url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ar&dt=t&q=${encodeURIComponent(text)}`;
-                let response = await fetch(url);
-                let data = await response.json();
-                return data[0].map(item => item[0]).join('');
-            } catch {
-                return "";
-            }
-        }
-
-        function exportFinalPDF() {
-            if (renderedCanvases.length === 0) return;
-            statusLabel.innerText = "جاري حفظ الملف المترجم... 👑";
-
-            const { jsPDF } = window.jspdf;
-            const firstCanvas = renderedCanvases[0];
-            const orientation = firstCanvas.width > firstCanvas.height ? 'l' : 'p';
-            
-            const pdf = new jsPDF({
-                orientation: orientation,
-                unit: 'px',
-                format: [firstCanvas.width, firstCanvas.height]
-            });
-
-            renderedCanvases.forEach((canvas, index) => {
-                if (index > 0) {
-                    const pageOrientation = canvas.width > canvas.height ? 'l' : 'p';
-                    pdf.addPage([canvas.width, canvas.height], pageOrientation);
-                }
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
-            });
-
-            pdf.save(savedFileName + '.pdf');
-            statusLabel.innerText = "✨ تم تحميل الملف المعرب بنجاح!";
-        }
-
-        function resetPage() {
-            fileInput.value = '';
-            dropZone.style.display = 'flex';
-            progressArea.style.display = 'none';
-            actionBar.style.display = 'none';
-            previewContainer.style.display = 'none';
-            pagesWrapper.innerHTML = '';
-            renderedCanvases = [];
-        }
-    </script>
+ let sourceY=0,destY=0;
+ for(const ins of clean){
+  const cut=Math.max(sourceY,Math.min(r.canvas.height,ins.y));
+  if(cut>sourceY){
+    const h=cut-sourceY;
+    out.drawImage(r.canvas,0,sourceY,c.width,h,0,destY,c.width,h);
+    destY+=h;sourceY=cut;
+  }
+  // شريط الترجمة يُضاف قبل الفقرة الأصلية.
+  out.fillStyle='#fff';out.fillRect(0,destY,c.width,ins.bandHeight);
+  out.fillStyle='#ede9fe';out.fillRect(ins.left,destY+4,ins.width,ins.bandHeight-8);
+  out.font='700 '+ins.fontSize+'px Cairo, sans-serif';
+  out.fillStyle='#31204f';out.textAlign='right';out.direction='rtl';
+  const textRight=ins.right-9;
+  let ty=destY+ins.fontSize+7;
+  ins.wrapped.forEach(line=>{
+    out.fillText(line,textRight,ty);
+    ty+=ins.fontSize*1.42;
+  });
+  destY+=ins.bandHeight;
+ }
+ if(sourceY<r.canvas.height){
+  const h=r.canvas.height-sourceY;
+  out.drawImage(r.canvas,0,sourceY,c.width,h,0,destY,c.width,h);
+ }
+ return c;
+}
+function buildBilingualPage(lines,translations,pageNo){
+ const width=1000,pad=65,contentW=width-pad*2;let blocks=[];
+ const meas=document.createElement('canvas').getContext('2d');let total=110;
+ lines.forEach((l,i)=>{
+  const en=l.text,ar=translations[i]||'';
+  meas.font='600 19px Arial';const ens=wrapCanvas(meas,en,contentW);
+  meas.font='700 20px Cairo';const ars=ar?wrapCanvas(meas,ar,contentW):[];
+  const h=ens.length*28+ars.length*31+25;
+  blocks.push({enLines:ens,arLines:ars,h});total+=h;
+ });
+ const maxPageH=1450,pages=[];let current=[],used=75;
+ for(const b of blocks){if(used+b.h>maxPageH&&current.length){pages.push({blocks:current,height:used+40});current=[];used=75;}current.push(b);used+=b.h;}
+ if(current.length)pages.push({blocks:current,height:used+40});
+ // Each original PDF page remains its own section; if long, the section may continue on a following output page.
+ return pages.map((part,idx)=>{
+  const c=document.createElement('canvas');c.width=width;c.height=part.height;const x=c.getContext('2d');
+  x.fillStyle='#fff';x.fillRect(0,0,width,c.height);x.fillStyle='#6d28d9';x.fillRect(0,0,width,7);
+  x.font='800 18px Cairo';x.fillStyle='#6d28d9';x.textAlign='right';x.fillText('لينا • ترجمة ثنائية | الصفحة الأصلية '+pageNo+(pages.length>1?' — جزء '+(idx+1):''),width-pad,43);
+  let y=82;
+  part.blocks.forEach((b,j)=>{
+   x.font='600 19px Arial';x.fillStyle='#111827';x.textAlign='left';b.enLines.forEach(t=>{x.fillText(t,pad,y);y+=28;});
+   x.font='700 20px Cairo';x.fillStyle='#6d28d9';x.textAlign='right';x.direction='rtl';b.arLines.forEach(t=>{x.fillText(t,width-pad,y);y+=31;});
+   y+=18;x.strokeStyle='#eee8f7';x.beginPath();x.moveTo(pad,y-8);x.lineTo(width-pad,y-8);x.stroke();
+  });
+  return c;
+ });
+}
+function addPreview(canvas,pageNo){
+ const card=document.createElement('div');card.className='page-card';
+ const label=document.createElement('div');label.className='page-label';label.textContent='معاينة الصفحة '+pageNo;
+ const thumb=document.createElement('canvas');const maxW=720,ratio=Math.min(1,maxW/canvas.width);thumb.width=Math.round(canvas.width*ratio);thumb.height=Math.round(canvas.height*ratio);
+ thumb.getContext('2d').drawImage(canvas,0,0,thumb.width,thumb.height);
+ card.append(label,thumb);$('pages').appendChild(card);
+}
+$('startBtn').addEventListener('click',process);
+$('downloadBtn').addEventListener('click',()=>{
+ if(!outputPages.length)return;
+ try{
+  const {jsPDF}=window.jspdf;const first=outputPages[0];
+  const pdf=new jsPDF({orientation:first.width>first.height?'landscape':'portrait',unit:'px',format:[first.width,first.height],compress:true});
+  outputPages.forEach((c,i)=>{if(i)pdf.addPage([c.width,c.height],c.width>c.height?'landscape':'portrait');pdf.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,c.width,c.height,undefined,'FAST');});
+  pdf.save(outputName);
+ }catch(e){console.error(e);toast('حدث خطأ أثناء إنشاء PDF. قد يكون حجم الملف أكبر من ذاكرة الجهاز.');}
+});
+})();
+</script>
 </body>
 </html>
