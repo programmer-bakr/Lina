@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لينا | Lina - مترجم ملفات PDF المرتب</title>
+    <title>لينا | Lina - مترجم ملفات PDF المرتب بدقة</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
     
@@ -253,25 +253,26 @@
 
     <nav>
         <div class="brand">لينا 👑</div>
-        <div class="badge">مرتب ونظيف ✨</div>
+        <div class="badge">تصميم أصلي مرتب ✨</div>
     </nav>
 
     <section class="hero">
-        <h1>ترجم ملفاتك بدقة مع <span>لينا</span></h1>
+        <h1>ترجمي ملفاتك مع <span>لينا</span> بنفس التصميم بدقة</h1>
+        <p>تم تحسين المسافات وخلفيات النصوص لضمان عدم وجود أي تداخل وقراءة مريحة جداً!</p>
     </section>
 
     <main class="workspace">
         <label for="fileInput" class="upload-box" id="dropZone">
             <div class="icon-circle">📄</div>
-            <h3>اختار ملف الـ PDF لترجمته</h3>
-            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">ترجمة منظمة تحت كل سطر مباشرة</p>
+            <h3>اختاري ملف الـ PDF لترجمته</h3>
+            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">يحافظ على التصميم مع ترجمة واضحة أسفل كل سطر</p>
             <div class="upload-btn-text">اختيار ملف PDF ✨</div>
         </label>
         <input type="file" id="fileInput" accept=".pdf">
 
         <div class="progress-area" id="progressArea">
             <div class="progress-header">
-                <span id="statusLabel">جاري معالجة الصفحات بنظام مرتب...</span>
+                <span id="statusLabel">جاري معالجة الصفحات بدقة...</span>
                 <span id="percentLabel">0%</span>
             </div>
             <div class="progress-track">
@@ -285,7 +286,7 @@
         </div>
 
         <div class="preview-container" id="previewContainer">
-            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات المرتبة:</h4>
+            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات بدقة:</h4>
             <div id="pagesWrapper"></div>
         </div>
     </main>
@@ -311,21 +312,21 @@
         let renderedCanvases = [];
 
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) processPDFCleanLayout(e.target.files[0]);
+            if (e.target.files.length) processPDFPerfectLayout(e.target.files[0]);
         });
 
-        async function processPDFCleanLayout(file) {
+        async function processPDFPerfectLayout(file) {
             if (file.type !== "application/pdf") {
                 alert("يرجى اختيار ملف بصيغة PDF فقط.");
                 return;
             }
 
-            savedFileName = file.name.replace('.pdf', '') + "_لينا_مرتب";
+            savedFileName = file.name.replace('.pdf', '') + "_لينا_دقيق";
             dropZone.style.display = 'none';
             progressArea.style.display = 'block';
             pagesWrapper.innerHTML = '';
             renderedCanvases = [];
-            setProgress(5, "جاري قراءة الملف...");
+            setProgress(5, "جاري تحليل هيكل الملف...");
 
             const reader = new FileReader();
             reader.readAsArrayBuffer(file);
@@ -341,7 +342,7 @@
                     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                         setProgress(
                             Math.round(((pageNum - 1) / totalPages) * 100),
-                            `جاري ترتيب وترجمة الصفحة ${pageNum} من ${totalPages}...`
+                            `جاري معالجة وتنسيق الصفحة ${pageNum} من ${totalPages}...`
                         );
 
                         const page = await pdf.getPage(pageNum);
@@ -369,7 +370,7 @@
 
                             const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
                             const x = tx[4];
-                            const y = viewport.height - tx[5]; // عكس المحور لترتيب سليم من الأعلى للأسفل
+                            const y = viewport.height - tx[5];
                             const fontHeight = Math.hypot(tx[2], tx[3]);
 
                             let existingLine = linesMap.find(l => Math.abs(l.y - y) < (fontHeight * 0.8));
@@ -388,10 +389,9 @@
                             }
                         });
 
-                        // ترتيب الأسطر من الأعلى إلى الأسفل لتجنب أي تداخل عشوائي
+                        // ترتيب الأسطر من الأعلى لأسفل لضمان الترتيب السليم
                         linesMap.sort((a, b) => a.y - b.y);
 
-                        // رسم مستطيل خلفية نظيف وتنسيق الترجمة تحت كل سطر بدون تداخل
                         for (let i = 0; i < linesMap.length; i++) {
                             const lineObj = linesMap[i];
                             if (lineObj.text.length < 2 || /^[0-9\W]+$/.test(lineObj.text)) continue;
@@ -399,22 +399,22 @@
                             const arText = await getArabicTranslation(lineObj.text);
                             if (!arText) continue;
 
-                            const arFontSize = Math.max(11, Math.min(lineObj.fontSize * 0.85, 20));
+                            const arFontSize = Math.max(10, Math.min(lineObj.fontSize * 0.8, 18));
                             context.font = `bold ${arFontSize}px 'Cairo', sans-serif`;
                             
                             const textMetrics = context.measureText(arText);
                             const arWidth = textMetrics.width;
                             
-                            // إحداثي الـ Y الحقيقي بعد عكسه للرسم السليم
                             const realY = viewport.height - lineObj.y;
-                            const arY = realY + arFontSize + 6; // مسافة أمان تفصل بين الإنجليزي والعربي
+                            // مسافة أمان كافية أسفل النص الأصلي لعدم حدوث أي تداخل نهائياً
+                            const arY = realY + arFontSize + 8; 
 
-                            // صندوق خلفية أبيض غير شفاف بالكامل لضمان قراءة فائقة النقاء
-                            context.fillStyle = "rgba(255, 255, 255, 0.95)";
-                            context.fillRect(lineObj.minX - 4, arY - arFontSize, arWidth + 12, arFontSize + 6);
+                            // مساحة خلفية بيضاء نقية ومرتبة بالكامل خلف النص العربي
+                            context.fillStyle = "rgba(255, 255, 255, 0.98)";
+                            context.fillRect(lineObj.minX - 6, arY - arFontSize - 2, arWidth + 14, arFontSize + 8);
 
-                            // كتابة الترجمة العربية مرتبة ومنسقة لليمين
-                            context.fillStyle = "#be185d";
+                            // كتابة الترجمة بخط واضح ومنظم
+                            context.fillStyle = "#9f1239"; // درجة وردي غامق مريحة للعين جداً للقراءة
                             context.textAlign = "right";
                             context.direction = "rtl";
                             context.fillText(arText, lineObj.minX + arWidth, arY + 2);
@@ -424,7 +424,7 @@
                         renderedCanvases.push(canvas);
                     }
 
-                    setProgress(100, "✨ تمت عملية الترتيب والترجمة بنجاح تام!");
+                    setProgress(100, "✨ تمت المعالجة والتنسيق بأعلى دقة!");
                     actionBar.style.display = 'flex';
 
                 } catch (err) {
@@ -453,7 +453,7 @@
 
         function exportFinalPDF() {
             if (renderedCanvases.length === 0) return;
-            statusLabel.innerText = "جاري حفظ الملف المرتب... 👑";
+            statusLabel.innerText = "جاري حفظ الملف النهائي... 👑";
 
             const { jsPDF } = window.jspdf;
             const firstCanvas = renderedCanvases[0];
@@ -475,7 +475,7 @@
             });
 
             pdf.save(savedFileName + '.pdf');
-            statusLabel.innerText = "✨ تم تحميل الملف المرتب بنجاح!";
+            statusLabel.innerText = "✨ تم تحميل الملف بنجاح وبنفس التصميم!";
         }
 
         function resetPage() {
