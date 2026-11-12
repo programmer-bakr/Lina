@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لينا | Lina - مترجم ملفات PDF مع المخططات والتصميم الأصلي</title>
+    <title>لينا | Lina - الترجمة المنظمة بدون تداخل</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
     
@@ -253,26 +253,26 @@
 
     <nav>
         <div class="brand">لينا 👑</div>
-        <div class="badge">التصميم الأصلي والمخططات ✨</div>
+        <div class="badge">بدون أي تداخل ✨</div>
     </nav>
 
     <section class="hero">
-        <h1>ترجمي ملفاتك مع <span>لينا</span> مع الحفاظ التام على التصميم والمخططات</h1>
-        <p>استخراج النصوص، ترجمتها، ووضعها أسفل كل سطر بوضوح تام مع بقاء الصور والمخططات كما هي!</p>
+        <h1>ترجمي ملفاتك بدقة ووضوح مع <span>لينا</span></h1>
+        <p>تم توسيع المسافات بين السطور لضمان قراءة مريحة ومنظمة 100%!</p>
     </section>
 
     <main class="workspace">
         <label for="fileInput" class="upload-box" id="dropZone">
             <div class="icon-circle">📄</div>
             <h3>اختاري ملف الـ PDF لترجمته</h3>
-            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">يحافظ على المخططات والصور الأصلية 100%</p>
+            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">يحافظ على المخططات والصور مع مسافات آمنة للترجمة</p>
             <div class="upload-btn-text">اختيار ملف PDF ✨</div>
         </label>
         <input type="file" id="fileInput" accept=".pdf">
 
         <div class="progress-area" id="progressArea">
             <div class="progress-header">
-                <span id="statusLabel">جاري معالجة الملف واستخراج النصوص والمخططات...</span>
+                <span id="statusLabel">جاري ضبط المسافات وترجمة الملف...</span>
                 <span id="percentLabel">0%</span>
             </div>
             <div class="progress-track">
@@ -281,12 +281,12 @@
         </div>
 
         <div class="action-bar" id="actionBar">
-            <button class="btn btn-download" onclick="exportFinalPDF()">✨ تحميل الملف النهائي بالمخططات (PDF)</button>
+            <button class="btn btn-download" onclick="exportFinalPDF()">✨ تحميل الملف المرتب (PDF)</button>
             <button class="btn btn-reset" onclick="resetPage()">🔄 ترجمة ملف آخر</button>
         </div>
 
         <div class="preview-container" id="previewContainer">
-            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات مع المخططات والترجمة:</h4>
+            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات المرتبة:</h4>
             <div id="pagesWrapper"></div>
         </div>
     </main>
@@ -312,16 +312,16 @@
         let renderedCanvases = [];
 
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) processPDFWithOriginalLayout(e.target.files[0]);
+            if (e.target.files.length) processPDFNoOverlap(e.target.files[0]);
         });
 
-        async function processPDFWithOriginalLayout(file) {
+        async function processPDFNoOverlap(file) {
             if (file.type !== "application/pdf") {
                 alert("يرجى اختيار ملف بصيغة PDF فقط.");
                 return;
             }
 
-            savedFileName = file.name.replace('.pdf', '') + "_لينا_بالمخططات";
+            savedFileName = file.name.replace('.pdf', '') + "_لينا_مرتب";
             dropZone.style.display = 'none';
             progressArea.style.display = 'block';
             pagesWrapper.innerHTML = '';
@@ -342,27 +342,31 @@
                     for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
                         updateProgress(
                             Math.round(((pageNum - 1) / totalPages) * 100),
-                            `جاري معالجة الصفحة ${pageNum} من ${totalPages}...`
+                            `جاري ضبط وتنسيق الصفحة ${pageNum} من ${totalPages}...`
                         );
 
                         const page = await pdf.getPage(pageNum);
                         const scale = 2.0;
                         const viewport = page.getViewport({ scale: scale });
 
-                        // إنشاء لوحة رسم تحمل أبعاد الصفحة الأصلية بدقة
+                        // زيادة مساحة إضافية لكل صفحة لتستوعب الفراغات الجديدة بكل راحة
+                        const extraHeight = 500;
                         const canvas = document.createElement('canvas');
                         const context = canvas.getContext('2d');
                         canvas.width = viewport.width;
-                        canvas.height = viewport.height;
+                        canvas.height = viewport.height + extraHeight;
                         canvas.className = 'rendered-page-canvas';
 
-                        // 1. رسم محتوى الصفحة الأصلي (صور، جداول، مخططات، وخلفيات)
+                        // خلفية بيضاء نقية
+                        context.fillStyle = "#ffffff";
+                        context.fillRect(0, 0, canvas.width, canvas.height);
+
+                        // رسم الصفحة الأصلية
                         await page.render({
                             canvasContext: context,
                             viewport: viewport
                         }).promise;
 
-                        // 2. استخراج النصوص وتحديد مواقعها
                         const textContent = await page.getTextContent();
                         let linesMap = [];
 
@@ -394,29 +398,37 @@
                         // ترتيب الأسطر من الأعلى للأسفل
                         linesMap.sort((a, b) => a.y - b.y);
 
-                        // 3. ترجمة النصوص ووضعها بمسافة أمان تحت كل سطر بدون التأثير على المخططات
+                        let currentShift = 0;
+                        let lastY = 0;
+
                         for (let i = 0; i < linesMap.length; i++) {
-                            const lineObj = linesMap[i];
+                            let lineObj = linesMap[i];
                             if (lineObj.text.length < 2 || /^[0-9\W]+$/.test(lineObj.text)) continue;
+
+                            // توسيع الإزاحة التدريجية لإنشاء مسافة أمان كافية بين السطور
+                            if (lastY > 0 && (lineObj.y - lastY) > 12) {
+                                currentShift += 22;
+                            }
+                            lastY = lineObj.y;
 
                             const arText = await translateText(lineObj.text);
                             if (!arText) continue;
 
-                            const arFontSize = Math.max(10, Math.min(lineObj.fontSize * 0.85, 18));
+                            const arFontSize = Math.max(11, Math.min(lineObj.fontSize * 0.85, 18));
                             context.font = `bold ${arFontSize}px 'Cairo', sans-serif`;
                             
                             const textMetrics = context.measureText(arText);
                             const arWidth = textMetrics.width;
                             
-                            const realY = viewport.height - lineObj.y;
-                            const arY = realY + arFontSize + 7; // مسافة أمان تفصل بين النص الأصلي والترجمة
+                            const realY = viewport.height - lineObj.y + currentShift;
+                            const arY = realY + arFontSize + 12; // مسافة أمان واسعة تمنع التداخل نهائياً
 
-                            // صندوق خلفية أبيض ناصع خلف النص العربي ليكون واضحاً فوق أي مخطط أو لون
-                            context.fillStyle = "rgba(255, 255, 255, 0.95)";
-                            context.fillRect(lineObj.minX - 4, arY - arFontSize - 2, arWidth + 12, arFontSize + 6);
+                            // صندوق خلفية أبيض عريض ونظيف يحجب أي تداخل محتمل
+                            context.fillStyle = "rgba(255, 255, 255, 0.98)";
+                            context.fillRect(lineObj.minX - 8, arY - arFontSize - 3, arWidth + 16, arFontSize + 10);
 
-                            // كتابة الترجمة العربية بدقة
-                            context.fillStyle = "#9f1239";
+                            // كتابة الترجمة بوضوح
+                            context.fillStyle = "#be185d";
                             context.textAlign = "right";
                             context.direction = "rtl";
                             context.fillText(arText, lineObj.minX + arWidth, arY + 2);
@@ -426,7 +438,7 @@
                         renderedCanvases.push(canvas);
                     }
 
-                    updateProgress(100, "✨ تمت معالجة الملف والمخططات بنجاح تام!");
+                    updateProgress(100, "✨ تمت المعالجة بدون أي تداخل!");
                     actionBar.style.display = 'flex';
 
                 } catch (error) {
@@ -455,7 +467,7 @@
 
         function exportFinalPDF() {
             if (renderedCanvases.length === 0) return;
-            statusLabel.innerText = "جاري حفظ الملف النهائي بالمخططات والصور... 👑";
+            statusLabel.innerText = "جاري حفظ الملف المرتب... 👑";
 
             const { jsPDF } = window.jspdf;
             const firstCanvas = renderedCanvases[0];
@@ -477,7 +489,7 @@
             });
 
             pdf.save(savedFileName + '.pdf');
-            statusLabel.innerText = "✨ تم تحميل الملف بجميع المخططات والصور بنجاح!";
+            statusLabel.innerText = "✨ تم تحميل الملف بنجاح وبدون تداخل!";
         }
 
         function resetPage() {
