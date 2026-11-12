@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لينا | Lina - مترجم ملفات PDF المرتب بدقة</title>
+    <title>لينا | Lina - الترجمة المرتبة والمنظمة</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800&family=Inter:wght@500;700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
@@ -35,6 +35,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding-bottom: 30px;
         }
 
         nav {
@@ -95,7 +96,6 @@
             padding: 30px;
             box-shadow: 0 20px 50px rgba(219, 39, 119, 0.08);
             border: 1px solid #fce7f3;
-            margin-bottom: 40px;
         }
 
         .upload-box {
@@ -211,41 +211,73 @@
             border: 1px solid #fbcfe8;
         }
 
+        /* حاوية المعاينة والبطاقات المنظمة */
         .preview-container {
             display: none;
             margin-top: 25px;
             border-top: 2px solid #fdf2f8;
             padding-top: 20px;
-            text-align: center;
         }
 
-        #pagesWrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            max-height: 600px;
-            overflow-y: auto;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 18px;
+        #pdfContent {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 16px;
             border: 1px solid #f3e8ff;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
-        .rendered-page-canvas {
-            max-width: 100%;
-            height: auto;
+        .doc-title {
+            text-align: center;
+            color: #db2777;
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #fce7f3;
+        }
+
+        .sentence-card {
+            background: #fffdfd;
+            border: 1px solid #f3e8ff;
+            border-right: 4px solid #db2777;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            page-break-inside: avoid;
+        }
+
+        .en-line {
+            font-family: 'Inter', sans-serif;
+            direction: ltr;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .ar-line {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            text-align: right;
+            font-size: 15px;
+            font-weight: 700;
+            color: #be185d;
+            background: #fdf2f8;
+            padding: 6px 12px;
             border-radius: 8px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-            border: 1px solid #e2e8f0;
+            line-height: 1.6;
         }
 
         footer {
-            margin-top: auto;
-            padding: 20px;
+            margin-top: 30px;
             color: var(--text-muted);
             font-size: 0.85rem;
             font-weight: 600;
+            text-align: center;
         }
     </style>
 </head>
@@ -253,26 +285,26 @@
 
     <nav>
         <div class="brand">لينا 👑</div>
-        <div class="badge">تصميم أصلي مرتب ✨</div>
+        <div class="badge">ترجمة منظمة وبدون تداخل ✨</div>
     </nav>
 
     <section class="hero">
-        <h1>ترجمي ملفاتك مع <span>لينا</span> بنفس التصميم بدقة</h1>
-        <p>تم تحسين المسافات وخلفيات النصوص لضمان عدم وجود أي تداخل وقراءة مريحة جداً!</p>
+        <h1>ترجمي ملفاتك بكل راحة مع <span>لينا</span></h1>
+        <p>نظام بطاقات منظم جداً يضع كل سطر إنجليزي وتحته ترجمته العربية بوضوح تام للقراءة والدراسة!</p>
     </section>
 
     <main class="workspace">
         <label for="fileInput" class="upload-box" id="dropZone">
             <div class="icon-circle">📄</div>
             <h3>اختاري ملف الـ PDF لترجمته</h3>
-            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">يحافظ على التصميم مع ترجمة واضحة أسفل كل سطر</p>
+            <p style="color: #64748b; font-size: 0.85rem; margin-top: 4px;">ترجمة نصية صافية ومرتبة 100%</p>
             <div class="upload-btn-text">اختيار ملف PDF ✨</div>
         </label>
         <input type="file" id="fileInput" accept=".pdf">
 
         <div class="progress-area" id="progressArea">
             <div class="progress-header">
-                <span id="statusLabel">جاري معالجة الصفحات بدقة...</span>
+                <span id="statusLabel">جاري قراءة الترجمة...</span>
                 <span id="percentLabel">0%</span>
             </div>
             <div class="progress-track">
@@ -281,13 +313,15 @@
         </div>
 
         <div class="action-bar" id="actionBar">
-            <button class="btn btn-download" onclick="exportFinalPDF()">✨ تحميل الملف المرتب (PDF)</button>
+            <button class="btn btn-download" onclick="downloadCleanPDF()">✨ تحميل الملف المرتب (PDF)</button>
             <button class="btn btn-reset" onclick="resetPage()">🔄 ترجمة ملف آخر</button>
         </div>
 
         <div class="preview-container" id="previewContainer">
-            <h4 style="margin-bottom: 15px; color: #1e1b4b;">📖 معاينة الصفحات بدقة:</h4>
-            <div id="pagesWrapper"></div>
+            <div id="pdfContent">
+                <div class="doc-title">مستند مترجم بواسطة منصة لينا 👑</div>
+                <div id="cardsContainer"></div>
+            </div>
         </div>
     </main>
 
@@ -306,27 +340,25 @@
         const percentLabel = document.getElementById('percentLabel');
         const actionBar = document.getElementById('actionBar');
         const previewContainer = document.getElementById('previewContainer');
-        const pagesWrapper = document.getElementById('pagesWrapper');
+        const cardsContainer = document.getElementById('cardsContainer');
 
-        let savedFileName = "Lina_Translated";
-        let renderedCanvases = [];
+        let savedFileName = "Lina_Clean_Translated";
 
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) processPDFPerfectLayout(e.target.files[0]);
+            if (e.target.files.length) processCleanTextPDF(e.target.files[0]);
         });
 
-        async function processPDFPerfectLayout(file) {
+        async function processCleanTextPDF(file) {
             if (file.type !== "application/pdf") {
                 alert("يرجى اختيار ملف بصيغة PDF فقط.");
                 return;
             }
 
-            savedFileName = file.name.replace('.pdf', '') + "_لينا_دقيق";
+            savedFileName = file.name.replace('.pdf', '') + "_لينا_مرتب";
             dropZone.style.display = 'none';
             progressArea.style.display = 'block';
-            pagesWrapper.innerHTML = '';
-            renderedCanvases = [];
-            setProgress(5, "جاري تحليل هيكل الملف...");
+            cardsContainer.innerHTML = '';
+            setProgress(5, "جاري استخراج النصوص...");
 
             const reader = new FileReader();
             reader.readAsArrayBuffer(file);
@@ -335,101 +367,52 @@
                 try {
                     const typedarray = new Uint8Array(this.result);
                     const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                    const totalPages = pdf.numPages;
+                    let lines = [];
+
+                    for (let p = 1; p <= pdf.numPages; p++) {
+                        const page = await pdf.getPage(p);
+                        const content = await page.getTextContent();
+                        
+                        content.items.forEach(item => {
+                            const txt = item.str.trim();
+                            if (txt.length > 2) {
+                                lines.push(txt);
+                            }
+                        });
+                    }
+
+                    // إزالة التكرارات وتنظيف النصوص
+                    lines = [...new Set(lines)];
+
+                    if (lines.length === 0) {
+                        setProgress(0, "لم يتم العثور على نصوص كافية في هذا الملف.");
+                        return;
+                    }
 
                     previewContainer.style.display = 'block';
 
-                    for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-                        setProgress(
-                            Math.round(((pageNum - 1) / totalPages) * 100),
-                            `جاري معالجة وتنسيق الصفحة ${pageNum} من ${totalPages}...`
-                        );
+                    for (let i = 0; i < lines.length; i++) {
+                        const en = lines[i];
+                        const pct = Math.round(((i + 1) / lines.length) * 100);
+                        setProgress(pct, `جاري ترجمة السطر ${i + 1} من ${lines.length}...`);
 
-                        const page = await pdf.getPage(pageNum);
-                        const scale = 2.0;
-                        const viewport = page.getViewport({ scale: scale });
+                        const ar = await getArabicTranslation(en);
 
-                        const canvas = document.createElement('canvas');
-                        const context = canvas.getContext('2d');
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                        canvas.className = 'rendered-page-canvas';
-
-                        // رسم الصفحة الأصلية
-                        await page.render({
-                            canvasContext: context,
-                            viewport: viewport
-                        }).promise;
-
-                        const textContent = await page.getTextContent();
-                        let linesMap = [];
-
-                        textContent.items.forEach(item => {
-                            const str = item.str.trim();
-                            if (!str) return;
-
-                            const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
-                            const x = tx[4];
-                            const y = viewport.height - tx[5];
-                            const fontHeight = Math.hypot(tx[2], tx[3]);
-
-                            let existingLine = linesMap.find(l => Math.abs(l.y - y) < (fontHeight * 0.8));
-                            if (existingLine) {
-                                existingLine.text += " " + str;
-                                existingLine.minX = Math.min(existingLine.minX, x);
-                                existingLine.maxX = Math.max(existingLine.maxX, x + (item.width * scale));
-                            } else {
-                                linesMap.push({
-                                    text: str,
-                                    y: y,
-                                    minX: x,
-                                    maxX: x + (item.width * scale),
-                                    fontSize: fontHeight
-                                });
-                            }
-                        });
-
-                        // ترتيب الأسطر من الأعلى لأسفل لضمان الترتيب السليم
-                        linesMap.sort((a, b) => a.y - b.y);
-
-                        for (let i = 0; i < linesMap.length; i++) {
-                            const lineObj = linesMap[i];
-                            if (lineObj.text.length < 2 || /^[0-9\W]+$/.test(lineObj.text)) continue;
-
-                            const arText = await getArabicTranslation(lineObj.text);
-                            if (!arText) continue;
-
-                            const arFontSize = Math.max(10, Math.min(lineObj.fontSize * 0.8, 18));
-                            context.font = `bold ${arFontSize}px 'Cairo', sans-serif`;
-                            
-                            const textMetrics = context.measureText(arText);
-                            const arWidth = textMetrics.width;
-                            
-                            const realY = viewport.height - lineObj.y;
-                            // مسافة أمان كافية أسفل النص الأصلي لعدم حدوث أي تداخل نهائياً
-                            const arY = realY + arFontSize + 8; 
-
-                            // مساحة خلفية بيضاء نقية ومرتبة بالكامل خلف النص العربي
-                            context.fillStyle = "rgba(255, 255, 255, 0.98)";
-                            context.fillRect(lineObj.minX - 6, arY - arFontSize - 2, arWidth + 14, arFontSize + 8);
-
-                            // كتابة الترجمة بخط واضح ومنظم
-                            context.fillStyle = "#9f1239"; // درجة وردي غامق مريحة للعين جداً للقراءة
-                            context.textAlign = "right";
-                            context.direction = "rtl";
-                            context.fillText(arText, lineObj.minX + arWidth, arY + 2);
-                        }
-
-                        pagesWrapper.appendChild(canvas);
-                        renderedCanvases.push(canvas);
+                        const card = document.createElement('div');
+                        card.className = 'sentence-card';
+                        card.innerHTML = `
+                            <div class="en-line">${cleanHTML(en)}</div>
+                            <div class="ar-line">${cleanHTML(ar)}</div>
+                        `;
+                        cardsContainer.appendChild(card);
                     }
 
-                    setProgress(100, "✨ تمت المعالجة والتنسيق بأعلى دقة!");
+                    setProgress(100, "✨ تمت الترجمة والترتيب بكل أناقة!");
                     actionBar.style.display = 'flex';
 
                 } catch (err) {
                     console.error(err);
-                    setProgress(0, "حدث خطأ أثناء معالجة الملف.");
+                    setProgress(0, "حدث خطأ أثناء قراءة الملف.");
                 }
             };
         }
@@ -447,35 +430,25 @@
                 const data = await res.json();
                 return data[0].map(item => item[0]).join('');
             } catch {
-                return "";
+                return "[تعذرت الترجمة]";
             }
         }
 
-        function exportFinalPDF() {
-            if (renderedCanvases.length === 0) return;
-            statusLabel.innerText = "جاري حفظ الملف النهائي... 👑";
+        function downloadCleanPDF() {
+            const element = document.getElementById('pdfContent');
+            statusLabel.innerText = "جاري تجهيز الملف للتحميل... 👑";
 
-            const { jsPDF } = window.jspdf;
-            const firstCanvas = renderedCanvases[0];
-            const orientation = firstCanvas.width > firstCanvas.height ? 'l' : 'p';
-            
-            const pdf = new jsPDF({
-                orientation: orientation,
-                unit: 'px',
-                format: [firstCanvas.width, firstCanvas.height]
+            const opt = {
+                margin:       10,
+                filename:     savedFileName + '.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                statusLabel.innerText = "✨ تم تحميل الملف المرتب بنجاح!";
             });
-
-            renderedCanvases.forEach((canvas, index) => {
-                if (index > 0) {
-                    const pageOrientation = canvas.width > canvas.height ? 'l' : 'p';
-                    pdf.addPage([canvas.width, canvas.height], pageOrientation);
-                }
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
-            });
-
-            pdf.save(savedFileName + '.pdf');
-            statusLabel.innerText = "✨ تم تحميل الملف بنجاح وبنفس التصميم!";
         }
 
         function resetPage() {
@@ -484,8 +457,13 @@
             progressArea.style.display = 'none';
             actionBar.style.display = 'none';
             previewContainer.style.display = 'none';
-            pagesWrapper.innerHTML = '';
-            renderedCanvases = [];
+            cardsContainer.innerHTML = '';
+        }
+
+        function cleanHTML(str) {
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag]));
         }
     </script>
 </body>
